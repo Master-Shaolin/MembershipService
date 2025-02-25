@@ -25,21 +25,8 @@ builder.Services.AddApplicationServices();
 
 var app = builder.Build();
 
-// Apply migrations and seed data
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    var context = services.GetRequiredService<AppDbContext>();
-
-    try
-    {
-        DbInitializer.Initialize(context);
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"An error occurred while seeding the database: {ex.Message}");
-    }
-}
+// Seed the database
+await DbInitializer.Initialize(app);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

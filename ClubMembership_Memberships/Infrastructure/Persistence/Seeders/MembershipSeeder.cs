@@ -1,12 +1,13 @@
 ﻿using ClubMembership_Memberships.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace ClubMembership_Memberships.Infrastructure.Persistence.Seeders
 {
     public class MembershipSeeder
     {
-        public static void Seed(AppDbContext context)
+        public static async Task Seed(AppDbContext context)
         {
-            if (!context.Memberships.Any())
+            if (!await context.Memberships.AnyAsync())
             {
                 var memberships = new List<Membership>
             {
@@ -15,8 +16,8 @@ namespace ClubMembership_Memberships.Infrastructure.Persistence.Seeders
                 new() { Id = Guid.NewGuid(), Type = "Bronze", Price = 29.99m, DurationInMonths = 3 }
             };
 
-                context.Memberships.AddRange(memberships);
-                context.SaveChanges();
+                await context.Memberships.AddRangeAsync(memberships);
+                await context.SaveChangesAsync();
             }
         }
     }

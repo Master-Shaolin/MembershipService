@@ -5,10 +5,20 @@ namespace ClubMembership_Memberships.Infrastructure.Persistence
 {
     public class DbInitializer
     {
-        public static void Initialize(AppDbContext context)
+        public static async Task Initialize(IApplicationBuilder app)
         {
-            context.Database.Migrate();
-            MembershipSeeder.Seed(context);
+            using var serviceScope = app.ApplicationServices.CreateScope();
+            var context = serviceScope.ServiceProvider.GetService<AppDbContext>();
+            if (context != null)
+            {
+                await SeedAsync(context);
+            }
+        }
+
+        public static async Task SeedAsync(AppDbContext context)
+        {
+            await context.Database.MigrateAsync();
+            await MembershipSeeder.Seed(context);
         }
     }
 }
