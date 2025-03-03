@@ -4,10 +4,11 @@ using ClubMembership_Memberships.Infrastructure.Repositories;
 
 namespace ClubMembership_Memberships.Application.Services
 {
-    public class MemberShipService(IMembershipRepository membershipRepository, ISubscriptionRepository subscriptionRepository) : IMembershipService
+    public class MemberShipService(IMembershipRepository membershipRepository, ISubscriptionRepository subscriptionRepository, UserValidationService userValidationService) : IMembershipService
     {
         private readonly IMembershipRepository _membershipRepository = membershipRepository;
         private readonly ISubscriptionRepository _subscriptionRepository = subscriptionRepository;
+        private readonly UserValidationService _userValidationService = userValidationService;
 
         public async Task<List<MembershipDto>> GetAllMembershipsAsync()
         {
@@ -35,6 +36,12 @@ namespace ClubMembership_Memberships.Application.Services
 
         public async Task SubscribeUserAsync(SubscribeMembershipDto subscriptionDto)
         {
+            var userExists = await _userValidationService.ValidateUserAsync(subscriptionDto.UserId);
+            if (!userExists)
+            {
+                throw new Exception("User does not exist.");
+            }
+
             var membership = await _membershipRepository.GetByIdAsync(subscriptionDto.MembershipId)
             ?? throw new Exception("Membership not found.");
 
