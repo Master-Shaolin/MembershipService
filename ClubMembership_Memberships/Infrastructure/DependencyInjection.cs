@@ -14,6 +14,9 @@ namespace ClubMembership_Memberships.Infrastructure
             // Register services
             services.AddScoped<IMembershipService, MemberShipService>();
 
+            // Register grpc services
+            services.AddSingleton<UserValidationService>();
+
             return services;
         }
     }
